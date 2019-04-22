@@ -19,4 +19,5 @@
     	Amount of threads (default 1)
 
 # Results
-![](https://github.com/HakanSunay/mandelbrot/blob/master/best_quality.png)
+![](https://github.com/HakanSunay/mandelbrot/blob/master/results/best_quality.png)
+![](https://github.com/HakanSunay/mandelbrot/blob/master/results/zad18.png)
