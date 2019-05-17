@@ -1,44 +1,33 @@
 package main
 
 import (
-	"image"
 	"image/color"
-	"math/cmplx"
+	"mandelbrot/converter"
 	"strconv"
 	"strings"
 	"sync"
 )
 
-type Converter struct {
-	Width, Height                                  int
-	RealMin, RealMax, ImagMin, ImagMax, Complexity float64
-	MaxIterations                                  uint8
-}
-
-func NewConverter(i int, i2 int, f float64, f2 float64, f3 float64, f4 float64, f5 float64, i3 uint8) *Converter {
-	return &Converter{i, i2, f, f2, f3,
-		f4, f5, i3}
-}
-
-func (c *Converter) populateImage(img *image.NRGBA, colorMatrix [][]color.NRGBA) {
-	for i := 0; i < c.Width; i++ {
-		for j := 0; j < c.Height; j++ {
-			img.Set(i, j, colorMatrix[i][j])
+func calculateColumn(w *sync.WaitGroup, c *chan int, height int, converter *converter.Converter, pixels [][]color.NRGBA) {
+	for x := range *c {
+		for y := 0; y < height; y++ {
+			complexNumber := converter.PixelToComplex(x, y)
+			if iterations := converter.Compute(complexNumber); iterations < converter.MaxIterations() {
+				pixels[x][y] = color.NRGBA{iterations * 255, iterations * 50, iterations * 20, 255}
+			} else {
+				pixels[x][y] = color.NRGBA{0, 0, 0, 255}
+			}
 		}
 	}
+	w.Done()
 }
 
-func (c *Converter) mandelbrot(num complex128) uint8 {
-	currentIterations := uint8(0)
-	for z := num; cmplx.Abs(z) <= c.Complexity && currentIterations < c.MaxIterations; currentIterations++ {
-		z = cmplx.Cos(z) * num
+func createPixelMatrix(h int, w int) [][]color.NRGBA {
+	pixels := make([][]color.NRGBA, w)
+	for r := range pixels {
+		pixels[r] = make([]color.NRGBA, h)
 	}
-	return currentIterations
-}
-
-func (c *Converter) pixelToComplex(x, y int) complex128 {
-	return complex(c.RealMin+(float64(x)/float64(c.Width))*(c.RealMax-c.RealMin),
-		c.ImagMin+(float64(y)/float64(c.Height))*(c.ImagMax-c.ImagMin))
+	return pixels
 }
 
 func getRanges(s string) (float64, float64, float64, float64) {
@@ -64,27 +53,4 @@ func getDimensions(s string) (int, int) {
 		height, _ := strconv.Atoi(dimensions[1])
 		return width, height
 	}
-}
-
-func calculateColumn(w *sync.WaitGroup, c *chan int, height int, converter *Converter, pixels [][]color.NRGBA) {
-	for x := range *c {
-		for y := 0; y < height; y++ {
-			complexNumber := converter.pixelToComplex(x, y)
-			if iterations := converter.mandelbrot(complexNumber); iterations < converter.MaxIterations {
-				pixels[x][y] = color.NRGBA{iterations * 255, iterations * 50,
-					iterations * 20, 255}
-			} else {
-				pixels[x][y] = color.NRGBA{0, 0, 0, 255}
-			}
-		}
-	}
-	w.Done()
-}
-
-func createPixelMatrix(h int, w int) [][]color.NRGBA {
-	pixels := make([][]color.NRGBA, w)
-	for r := range pixels {
-		pixels[r] = make([]color.NRGBA, h)
-	}
-	return pixels
 }
