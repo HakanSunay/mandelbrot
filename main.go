@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"image"
 	"image/png"
-	"mandelbrot/src"
+	"mandelbrot/mandelbrot"
 	"os"
 	"sync"
 	"time"
@@ -32,18 +32,18 @@ func main() {
 	flag.Parse()
 
 	var workers = *tasks
-	var width, height = getDimensions(*dimension)
-	var realMin, realMax, imagMin, imagMax = getRanges(*ranges)
+	var width, height = mandelbrot.GetDimensions(*dimension)
+	var realMin, realMax, imagMin, imagMax = mandelbrot.GetRanges(*ranges)
 	var fileName = *outputFile
 	var complexity = *complexity
 	var iterations = uint8(*iterations)
 
-	bound := src.Bound{realMin, realMax, imagMin, imagMax}
-	picture := src.Picture{width, height}
-	algorithm := src.Algorithm{complexity, iterations}
-	engine := src.Converter{picture, bound, algorithm}
+	bound := mandelbrot.Bound{realMin, realMax, imagMin, imagMax}
+	picture := mandelbrot.Picture{width, height}
+	algorithm := mandelbrot.Algorithm{complexity, iterations}
+	engine := mandelbrot.Converter{picture, bound, algorithm}
 
-	pixels := createPixelMatrix(height, width)
+	pixels := mandelbrot.CreatePixelMatrix(height, width)
 
 	c := make(chan int, width)
 	var w sync.WaitGroup
@@ -52,7 +52,7 @@ func main() {
 
 	for n := 0; n < workers; n++ {
 		w.Add(1)
-		go calculateColumn(&w, &c, height, &engine, pixels)
+		go mandelbrot.CalculateColumn(&w, &c, height, &engine, pixels)
 	}
 
 	for i := 0; i < width; i++ {
@@ -64,7 +64,7 @@ func main() {
 
 	fmt.Println(time.Since(start))
 
-	resultFile := image.NewNRGBA(image.Rect(0,0, width, height))
+	resultFile := image.NewNRGBA(image.Rect(0, 0, width, height))
 	picture.PopulateImage(resultFile, pixels)
 
 	f, err := os.Create(fileName)

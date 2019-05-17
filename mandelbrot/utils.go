@@ -1,14 +1,14 @@
-package main
+package mandelbrot
 
 import (
 	"image/color"
-	"mandelbrot/src"
+	"mandelbrot/mandelbrot"
 	"strconv"
 	"strings"
 	"sync"
 )
 
-func calculateColumn(w *sync.WaitGroup, c *chan int, height int, converter *src.Converter, pixels [][]color.NRGBA) {
+func CalculateColumn(w *sync.WaitGroup, c *chan int, height int, converter *mandelbrot.Converter, pixels [][]color.NRGBA) {
 	for x := range *c {
 		for y := 0; y < height; y++ {
 			complexNumber := converter.PixelToComplex(x, y)
@@ -22,7 +22,7 @@ func calculateColumn(w *sync.WaitGroup, c *chan int, height int, converter *src.
 	w.Done()
 }
 
-func createPixelMatrix(h int, w int) [][]color.NRGBA {
+func CreatePixelMatrix(h int, w int) [][]color.NRGBA {
 	pixels := make([][]color.NRGBA, w)
 	for r := range pixels {
 		pixels[r] = make([]color.NRGBA, h)
@@ -30,7 +30,7 @@ func createPixelMatrix(h int, w int) [][]color.NRGBA {
 	return pixels
 }
 
-func getRanges(s string) (float64, float64, float64, float64) {
+func GetRanges(s string) (float64, float64, float64, float64) {
 	ranges := strings.Split(s, ":")
 	if len(ranges) != 4 {
 		return 0, 0, 0, 0
@@ -44,7 +44,7 @@ func getRanges(s string) (float64, float64, float64, float64) {
 
 }
 
-func getDimensions(s string) (int, int) {
+func GetDimensions(s string) (int, int) {
 	dimensions := strings.Split(s, "x")
 	if len(dimensions) != 2 {
 		return 0, 0
