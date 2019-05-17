@@ -2,13 +2,12 @@ package mandelbrot
 
 import (
 	"image/color"
-	"mandelbrot/mandelbrot"
 	"strconv"
 	"strings"
 	"sync"
 )
 
-func CalculateColumn(w *sync.WaitGroup, c *chan int, height int, converter *mandelbrot.Converter, pixels [][]color.NRGBA) {
+func CalculateColumn(w *sync.WaitGroup, c *chan int, height int, converter *Converter, pixels [][]color.NRGBA) {
 	for x := range *c {
 		for y := 0; y < height; y++ {
 			complexNumber := converter.PixelToComplex(x, y)
