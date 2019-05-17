@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"image"
 	"image/png"
-	"mandelbrot/converter"
+	"mandelbrot/src"
 	"os"
 	"sync"
 	"time"
@@ -38,10 +38,10 @@ func main() {
 	var complexity = *complexity
 	var iterations = uint8(*iterations)
 
-	bound := converter.Bound{realMin, realMax, imagMin, imagMax}
-	picture := converter.Picture{width, height}
-	algorithm := converter.Algorithm{complexity, iterations}
-	engine := converter.Converter{picture, bound, algorithm}
+	bound := src.Bound{realMin, realMax, imagMin, imagMax}
+	picture := src.Picture{width, height}
+	algorithm := src.Algorithm{complexity, iterations}
+	engine := src.Converter{picture, bound, algorithm}
 
 	pixels := createPixelMatrix(height, width)
 
