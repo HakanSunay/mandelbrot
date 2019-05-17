@@ -7,6 +7,7 @@ import (
 	"image/color"
 	"image/draw"
 	"image/png"
+	"mandelbrot/converter"
 	"os"
 	"sync"
 	"time"
@@ -39,10 +40,10 @@ func main() {
 	var complexity = *complexity
 	var iterations = uint8(*iterations)
 
-	converter := NewConverter(width, height,
-		realMin, realMax,
-		imagMin, imagMax,
-		complexity, iterations)
+	bound := converter.Bound{realMin, realMax, imagMin, imagMax}
+	picture := converter.Picture{width, height}
+	algorithm := converter.Algorithm{complexity, iterations}
+	engine := converter.Converter{picture, bound, algorithm}
 
 	pixels := createPixelMatrix(height, width)
 
@@ -53,7 +54,7 @@ func main() {
 
 	for n := 0; n < workers; n++ {
 		w.Add(1)
-		go calculateColumn(&w, &c, height, converter, pixels)
+		go calculateColumn(&w, &c, height, &engine, pixels)
 	}
 
 	for i := 0; i < width; i++ {
@@ -69,7 +70,7 @@ func main() {
 	resultFile := image.NewNRGBA(bounds)
 	draw.Draw(resultFile, bounds, image.NewUniform(color.Black), image.ZP, draw.Src)
 
-	converter.populateImage(resultFile, pixels)
+	picture.PopulateImage(resultFile, pixels)
 
 	f, err := os.Create(fileName)
 	if err != nil {
