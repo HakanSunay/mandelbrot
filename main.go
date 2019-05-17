@@ -4,8 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"image"
-	"image/color"
-	"image/draw"
 	"image/png"
 	"mandelbrot/converter"
 	"os"
@@ -66,10 +64,7 @@ func main() {
 
 	fmt.Println(time.Since(start))
 
-	bounds := image.Rect(0, 0, width, height)
-	resultFile := image.NewNRGBA(bounds)
-	draw.Draw(resultFile, bounds, image.NewUniform(color.Black), image.ZP, draw.Src)
-
+	resultFile := image.NewNRGBA(image.Rect(0,0, width, height))
 	picture.PopulateImage(resultFile, pixels)
 
 	f, err := os.Create(fileName)
