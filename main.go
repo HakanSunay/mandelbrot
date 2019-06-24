@@ -10,6 +10,15 @@ import (
 	"time"
 )
 
+const (
+	THREADS    = 1
+	DIMENSIONS = "640x480"
+	RANGE      = "-2.0:2.0:-1.0:1.0"
+	OUTPUTFILE = "zad18.png"
+	COMPLEXITY = 8
+	ITERATIONS = 50
+)
+
 var (
 	tasks, iterations *int
 	dimension,
@@ -19,12 +28,12 @@ var (
 )
 
 func init() {
-	tasks = flag.Int("t", 1, "Amount of threads")
-	dimension = flag.String("s", "640x480", "Dimensions: width x height")
-	ranges = flag.String("r", "-2.0:2.0:-1.0:1.0", "Real and Imaginary Number Range")
-	outputFile = flag.String("o", "zad18.png", "Name of the result file")
-	complexity = flag.Float64("c", 8, "Fractal complexity")
-	iterations = flag.Int("i", 50, "Mandelbrot loop maximum iterations")
+	tasks = flag.Int("t", THREADS, "Amount of threads")
+	dimension = flag.String("s", DIMENSIONS, "Dimensions: width x height")
+	ranges = flag.String("r", RANGE, "Real and Imaginary Number Range")
+	outputFile = flag.String("o", OUTPUTFILE, "Name of the result file")
+	complexity = flag.Float64("c", COMPLEXITY, "Fractal complexity")
+	iterations = flag.Int("i", ITERATIONS, "Mandelbrot loop maximum iterations")
 }
 
 func main() {
