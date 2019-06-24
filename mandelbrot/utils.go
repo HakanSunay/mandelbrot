@@ -7,19 +7,28 @@ import (
 	"strings"
 )
 
+const (
+	DefaultWIDTH   = 640
+	DefaultHEIGHT  = 480
+	DefaultImagMin = -2
+	DefaultImagMax = 2
+	DefaultRealMin = -2
+	DefaultRealMax = 2
+)
+
 type Bound struct {
 	RealMin, RealMax, ImagMin, ImagMax float64
 }
 
 type Picture struct {
 	Width, Height int
-	PixelMatrix [][]color.NRGBA
+	PixelMatrix   [][]color.NRGBA
 }
 
 type Algorithm struct {
 	Complexity    float64
 	MaxIterations uint8
-	Workers int
+	Workers       int
 }
 
 func (b *Bound) RealDif() float64 {
@@ -56,30 +65,40 @@ func CreatePixelMatrix(h int, w int) [][]color.NRGBA {
 
 func GetRanges(s string) (float64, float64, float64, float64) {
 	ranges := strings.Split(s, ":")
-	if len(ranges) != 4 {
-		return 0, 0, 0, 0
-	} else {
-		rmin, _ := strconv.ParseFloat(ranges[0], 64)
-		rmax, _ := strconv.ParseFloat(ranges[1], 64)
-		imin, _ := strconv.ParseFloat(ranges[2], 64)
-		imax, _ := strconv.ParseFloat(ranges[3], 64)
-		return rmin, rmax, imin, imax
+	rmin, err := strconv.ParseFloat(ranges[0], 64)
+	if err != nil {
+		rmin = DefaultRealMin
 	}
+	rmax, err := strconv.ParseFloat(ranges[1], 64)
+	if err != nil {
+		rmax = DefaultRealMax
+	}
+	imin, err := strconv.ParseFloat(ranges[2], 64)
+	if err != nil {
+		imin = DefaultImagMin
+	}
+	imax, err := strconv.ParseFloat(ranges[3], 64)
+	if err != nil {
+		imax = DefaultImagMax
+	}
+	return rmin, rmax, imin, imax
 
 }
 
 func GetDimensions(s string) (int, int) {
 	dimensions := strings.Split(s, "x")
-	if len(dimensions) != 2 {
-		return 0, 0
-	} else {
-		width, _ := strconv.Atoi(dimensions[0])
-		height, _ := strconv.Atoi(dimensions[1])
-		return width, height
+	width, err := strconv.Atoi(dimensions[0])
+	if err != nil {
+		width = DefaultHEIGHT
 	}
+	height, err := strconv.Atoi(dimensions[1])
+	if err != nil {
+		height = DefaultWIDTH
+	}
+	return width, height
 }
 
-func FillChannelWithColumns(c *chan int, width int){
+func FillChannelWithColumns(c *chan int, width int) {
 	for i := 0; i < width; i++ {
 		*c <- i
 	}
