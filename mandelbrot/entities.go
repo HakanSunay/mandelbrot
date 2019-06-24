@@ -5,6 +5,8 @@ import (
 	"math/cmplx"
 )
 
+// TODO: Add tests
+
 type Bound struct {
 	RealMin, RealMax, ImagMin, ImagMax float64
 }
@@ -20,11 +22,11 @@ type Algorithm struct {
 	Workers       int
 }
 
-func (b *Bound) RealDif() float64 {
+func (b *Bound) realDif() float64 {
 	return b.RealMax - b.RealMin
 }
 
-func (b *Bound) ImagDif() float64 {
+func (b *Bound) imagDif() float64 {
 	return b.ImagMax - b.ImagMin
 }
 
@@ -32,8 +34,8 @@ func (b *Bound) pixelToComplex(x, y int, picture Picture) complex128 {
 	width := float64(picture.Width)
 	height := float64(picture.Height)
 
-	return complex(b.RealMin+(float64(x)/width)*b.RealDif(),
-		b.ImagMin+(float64(y)/height)*b.ImagDif())
+	return complex(b.RealMin+(float64(x)/width)*b.realDif(),
+		b.ImagMin+(float64(y)/height)*b.imagDif())
 }
 
 func (a *Algorithm) getIterations(num complex128) uint8 {
