@@ -2,7 +2,6 @@ package mandelbrot
 
 import (
 	"image/color"
-	"math/cmplx"
 	"strconv"
 	"strings"
 )
@@ -15,45 +14,6 @@ const (
 	DefaultRealMin = -2
 	DefaultRealMax = 2
 )
-
-type Bound struct {
-	RealMin, RealMax, ImagMin, ImagMax float64
-}
-
-type Picture struct {
-	Width, Height int
-	PixelMatrix   [][]color.NRGBA
-}
-
-type Algorithm struct {
-	Complexity    float64
-	MaxIterations uint8
-	Workers       int
-}
-
-func (b *Bound) RealDif() float64 {
-	return b.RealMax - b.RealMin
-}
-
-func (b *Bound) ImagDif() float64 {
-	return b.ImagMax - b.ImagMin
-}
-
-func (b *Bound) pixelToComplex(x, y int, picture Picture) complex128 {
-	width := float64(picture.Width)
-	height := float64(picture.Height)
-
-	return complex(b.RealMin+(float64(x)/width)*b.RealDif(),
-		b.ImagMin+(float64(y)/height)*b.ImagDif())
-}
-
-func (a *Algorithm) getIterations(num complex128) uint8 {
-	currentIterations := uint8(0)
-	for z := num; cmplx.Abs(z) <= a.Complexity && currentIterations < a.MaxIterations; currentIterations++ {
-		z = cmplx.Cos(z) * num
-	}
-	return currentIterations
-}
 
 func CreatePixelMatrix(h int, w int) [][]color.NRGBA {
 	pixels := make([][]color.NRGBA, w)
