@@ -6,13 +6,20 @@ import (
 	"sync"
 )
 
+const (
+	RedColorAmplifier   = 255
+	GreenColorAmplifier = 50
+	BlueColorAmplifier  = 20
+	AlphaAmplifier      = 255
+)
+
 type Generator struct {
 	Picture   Picture
 	Bounds    Bound
 	Algorithm Algorithm
 }
 
-func (g * Generator) ExportImage() *image.NRGBA {
+func (g *Generator) ExportImage() *image.NRGBA {
 	img := image.NewNRGBA(image.Rect(0, 0, g.GetWidth(), g.GetHeight()))
 	colorMatrix := g.GetPixelMatrix()
 	for i := 0; i < g.GetWidth(); i++ {
@@ -35,20 +42,23 @@ func (g *Generator) MaxIterations() uint8 {
 	return g.Algorithm.MaxIterations
 }
 
-func (g * Generator) StartComputation(w *sync.WaitGroup, channel *chan int) {
+func (g *Generator) StartComputation(w *sync.WaitGroup, channel *chan int) {
 	for n := 0; n < g.GetWorkerCount(); n++ {
 		w.Add(1)
 		go g.ComputeColumn(w, channel)
 	}
 }
 
-func (g * Generator) ComputeColumn(w *sync.WaitGroup, channel *chan int) {
+func (g *Generator) ComputeColumn(w *sync.WaitGroup, channel *chan int) {
 	pixelMatrix := g.GetPixelMatrix()
 	for x := range *channel {
 		for y := 0; y < g.GetHeight(); y++ {
 			complexNumber := g.PixelToComplex(x, y)
 			if iterations := g.ComputeIterations(complexNumber); iterations < g.MaxIterations() {
-				pixelMatrix[x][y] = color.NRGBA{R: iterations * 255, G: iterations * 50, B: iterations * 20, A: 255}
+				pixelMatrix[x][y] = color.NRGBA{R: iterations * RedColorAmplifier,
+					G: iterations * GreenColorAmplifier,
+					B: iterations * BlueColorAmplifier,
+					A: AlphaAmplifier}
 			} else {
 				pixelMatrix[x][y] = color.NRGBA{A: 255}
 			}
