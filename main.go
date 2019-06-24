@@ -52,13 +52,13 @@ func main() {
 	bound := mandelbrot.Bound{RealMin: realMin, RealMax: realMax, ImagMin: imagMin, ImagMax: imagMax}
 	picture := mandelbrot.Picture{Width: width, Height: height, PixelMatrix: pixelMatrix}
 	algorithm := mandelbrot.Algorithm{Complexity: complexity, MaxIterations: iterations, Workers: workers}
-	engine := mandelbrot.Converter{Picture: picture, Bounds: bound, Algorithm: algorithm}
+	generator := mandelbrot.Generator{Picture: picture, Bounds: bound, Algorithm: algorithm}
 
 	c := make(chan int, width)
 	var w sync.WaitGroup
 
 	start := time.Now()
-	engine.StartComputation(&w, &c)
+	generator.StartComputation(&w, &c)
 	mandelbrot.FillChannelWithColumns(&c, width)
 
 	close(c)
@@ -67,7 +67,7 @@ func main() {
 	parallelWorkTime := time.Since(start)
 	defer fmt.Println(parallelWorkTime)
 
-	coloredImage := engine.ExportImage()
+	coloredImage := generator.ExportImage()
 	file, err := os.Create(fileName)
 	if err != nil {
 		fmt.Println(err)
