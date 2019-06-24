@@ -40,10 +40,10 @@ func main() {
 	)
 
 	pixelMatrix := mandelbrot.CreatePixelMatrix(height, width)
-	bound := mandelbrot.Bound{realMin, realMax, imagMin, imagMax}
-	picture := mandelbrot.Picture{width, height, pixelMatrix}
-	algorithm := mandelbrot.Algorithm{complexity, iterations, workers}
-	engine := mandelbrot.Converter{picture, bound, algorithm}
+	bound := mandelbrot.Bound{RealMin: realMin, RealMax: realMax, ImagMin: imagMin, ImagMax: imagMax}
+	picture := mandelbrot.Picture{Width: width, Height: height, PixelMatrix: pixelMatrix}
+	algorithm := mandelbrot.Algorithm{Complexity: complexity, MaxIterations: iterations, Workers: workers}
+	engine := mandelbrot.Converter{Picture: picture, Bounds: bound, Algorithm: algorithm}
 
 	c := make(chan int, width)
 	var w sync.WaitGroup
