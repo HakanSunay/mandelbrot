@@ -1,4 +1,4 @@
-# Mandelbrot Project - RSA
+# Mandelbrot Project - RSA 
 # Usage
 ``$ ./executable``
 ## Parameters
