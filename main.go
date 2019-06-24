@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"image"
 	"image/png"
 	"os"
 	"rsa/mandelbrot"
@@ -31,50 +30,42 @@ func init() {
 func main() {
 	flag.Parse()
 
-	var workers = *tasks
-	var width, height = mandelbrot.GetDimensions(*dimension)
-	var realMin, realMax, imagMin, imagMax = mandelbrot.GetRanges(*ranges)
-	var fileName = *outputFile
-	var complexity = *complexity
-	var iterations = uint8(*iterations)
+	var (
+		workers                            = *tasks
+		width, height                      = mandelbrot.GetDimensions(*dimension)
+		realMin, realMax, imagMin, imagMax = mandelbrot.GetRanges(*ranges)
+		fileName                           = *outputFile
+		complexity                         = *complexity
+		iterations                         = uint8(*iterations)
+	)
 
+	pixelMatrix := mandelbrot.CreatePixelMatrix(height, width)
 	bound := mandelbrot.Bound{realMin, realMax, imagMin, imagMax}
-	picture := mandelbrot.Picture{width, height}
-	algorithm := mandelbrot.Algorithm{complexity, iterations}
+	picture := mandelbrot.Picture{width, height, pixelMatrix}
+	algorithm := mandelbrot.Algorithm{complexity, iterations, workers}
 	engine := mandelbrot.Converter{picture, bound, algorithm}
-
-	pixels := mandelbrot.CreatePixelMatrix(height, width)
 
 	c := make(chan int, width)
 	var w sync.WaitGroup
 
 	start := time.Now()
-
-	for n := 0; n < workers; n++ {
-		w.Add(1)
-		go mandelbrot.CalculateColumn(&w, &c, height, &engine, pixels)
-	}
-
-	for i := 0; i < width; i++ {
-		c <- i
-	}
+	engine.StartComputation(&w, &c)
+	mandelbrot.FillChannelWithColumns(&c, width)
 
 	close(c)
 	w.Wait()
 
-	fmt.Println(time.Since(start))
+	parallelWorkTime := time.Since(start)
+	defer fmt.Println(parallelWorkTime)
 
-	resultFile := image.NewNRGBA(image.Rect(0, 0, width, height))
-	picture.PopulateImage(resultFile, pixels)
-
-	f, err := os.Create(fileName)
+	coloredImage := engine.ExportImage()
+	file, err := os.Create(fileName)
 	if err != nil {
 		fmt.Println(err)
-		return
 	}
-	defer f.Close()
+	defer file.Close()
 
-	if err = png.Encode(f, resultFile); err != nil {
+	if err := png.Encode(file, coloredImage); err != nil {
 		fmt.Println(err)
 	}
 }

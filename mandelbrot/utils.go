@@ -2,23 +2,48 @@ package mandelbrot
 
 import (
 	"image/color"
+	"math/cmplx"
 	"strconv"
 	"strings"
-	"sync"
 )
 
-func CalculateColumn(w *sync.WaitGroup, c *chan int, height int, converter *Converter, pixels [][]color.NRGBA) {
-	for x := range *c {
-		for y := 0; y < height; y++ {
-			complexNumber := converter.PixelToComplex(x, y)
-			if iterations := converter.Compute(complexNumber); iterations < converter.MaxIterations() {
-				pixels[x][y] = color.NRGBA{iterations * 255, iterations * 50, iterations * 20, 255}
-			} else {
-				pixels[x][y] = color.NRGBA{0, 0, 0, 255}
-			}
-		}
+type Bound struct {
+	RealMin, RealMax, ImagMin, ImagMax float64
+}
+
+type Picture struct {
+	Width, Height int
+	PixelMatrix [][]color.NRGBA
+}
+
+type Algorithm struct {
+	Complexity    float64
+	MaxIterations uint8
+	Workers int
+}
+
+func (b *Bound) RealDif() float64 {
+	return b.RealMax - b.RealMin
+}
+
+func (b *Bound) ImagDif() float64 {
+	return b.ImagMax - b.ImagMin
+}
+
+func (b *Bound) pixelToComplex(x, y int, picture Picture) complex128 {
+	width := float64(picture.Width)
+	height := float64(picture.Height)
+
+	return complex(b.RealMin+(float64(x)/width)*b.RealDif(),
+		b.ImagMin+(float64(y)/height)*b.ImagDif())
+}
+
+func (a *Algorithm) getIterations(num complex128) uint8 {
+	currentIterations := uint8(0)
+	for z := num; cmplx.Abs(z) <= a.Complexity && currentIterations < a.MaxIterations; currentIterations++ {
+		z = cmplx.Cos(z) * num
 	}
-	w.Done()
+	return currentIterations
 }
 
 func CreatePixelMatrix(h int, w int) [][]color.NRGBA {
@@ -51,5 +76,11 @@ func GetDimensions(s string) (int, int) {
 		width, _ := strconv.Atoi(dimensions[0])
 		height, _ := strconv.Atoi(dimensions[1])
 		return width, height
+	}
+}
+
+func FillChannelWithColumns(c *chan int, width int){
+	for i := 0; i < width; i++ {
+		*c <- i
 	}
 }
