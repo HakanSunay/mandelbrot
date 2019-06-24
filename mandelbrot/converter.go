@@ -48,9 +48,9 @@ func (c* Converter) ComputeColumn(w *sync.WaitGroup, channel *chan int) {
 		for y := 0; y < c.GetHeight(); y++ {
 			complexNumber := c.PixelToComplex(x, y)
 			if iterations := c.ComputeIterations(complexNumber); iterations < c.MaxIterations() {
-				pixelMatrix[x][y] = color.NRGBA{iterations * 255, iterations * 50, iterations * 20, 255}
+				pixelMatrix[x][y] = color.NRGBA{R: iterations * 255, G: iterations * 50, B: iterations * 20, A: 255}
 			} else {
-				pixelMatrix[x][y] = color.NRGBA{0, 0, 0, 255}
+				pixelMatrix[x][y] = color.NRGBA{A: 255}
 			}
 		}
 	}
