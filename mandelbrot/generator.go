@@ -13,72 +13,86 @@ const (
 	AlphaAmplifier      = 255
 )
 
-type Generator struct {
-	Picture   Picture
-	Bounds    Bound
-	Algorithm Algorithm
+type FractalGenerator struct {
+	picture   Picture
+	bounds    Bound
+	algorithm Algorithm
 }
 
-func (g *Generator) ExportImage() *image.NRGBA {
-	img := image.NewNRGBA(image.Rect(0, 0, g.GetWidth(), g.GetHeight()))
-	colorMatrix := g.GetPixelMatrix()
-	for i := 0; i < g.GetWidth(); i++ {
-		for j := 0; j < g.GetHeight(); j++ {
-			img.Set(i, j, colorMatrix[i][j])
-		}
-	}
-	return img
+func NewFractalGenerator(picture Picture, bound Bound, algorithm Algorithm) *FractalGenerator {
+	return &FractalGenerator{picture: picture, bounds: bound, algorithm: algorithm}
 }
 
-func (g *Generator) PixelToComplex(x, y int) complex128 {
-	return g.Picture.pixelToComplex(x, y, g.Bounds)
-}
-
-func (g *Generator) ComputeIterations(num complex128) uint8 {
-	return g.Algorithm.getIterations(num)
-}
-
-func (g *Generator) MaxIterations() uint8 {
-	return g.Algorithm.MaxIterations
-}
-
-func (g *Generator) StartComputation(w *sync.WaitGroup, channel *chan int) {
-	for n := 0; n < g.GetWorkerCount(); n++ {
+func (fg *FractalGenerator) StartComputation(w *sync.WaitGroup, channel *chan int) {
+	for n := 0; n < fg.getWorkerCount(); n++ {
 		w.Add(1)
-		go g.ComputeColumn(w, channel)
+		go fg.computeColumn(w, channel)
 	}
 }
 
-func (g *Generator) ComputeColumn(w *sync.WaitGroup, channel *chan int) {
-	pixelMatrix := g.GetPixelMatrix()
+func (fg *FractalGenerator) computeColumn(w *sync.WaitGroup, channel *chan int) {
+	pixelMatrix := fg.getPixelMatrix()
 	for x := range *channel {
-		for y := 0; y < g.GetHeight(); y++ {
-			complexNumber := g.PixelToComplex(x, y)
-			if iterations := g.ComputeIterations(complexNumber); iterations < g.MaxIterations() {
+		for y := 0; y < fg.getHeight(); y++ {
+			complexNumber := fg.pixelToComplex(x, y)
+			iterations := fg.computeIterations(complexNumber)
+			if fg.belongsToMandelbrotSet(iterations) {
+				pixelMatrix[x][y] = color.NRGBA{A: 255}
+			} else {
+				iterations := fg.algorithm.getIterations(complexNumber)
 				pixelMatrix[x][y] = color.NRGBA{R: iterations * RedColorAmplifier,
 					G: iterations * GreenColorAmplifier,
 					B: iterations * BlueColorAmplifier,
 					A: AlphaAmplifier}
-			} else {
-				pixelMatrix[x][y] = color.NRGBA{A: 255}
 			}
 		}
 	}
 	w.Done()
 }
 
-func (g *Generator) GetHeight() int {
-	return g.Picture.Height
+func (fg *FractalGenerator) ExportImage() *image.NRGBA {
+	img := image.NewNRGBA(image.Rect(0, 0, fg.getWidth(), fg.getHeight()))
+	colorMatrix := fg.getPixelMatrix()
+	for i := 0; i < fg.getWidth(); i++ {
+		for j := 0; j < fg.getHeight(); j++ {
+			img.Set(i, j, colorMatrix[i][j])
+		}
+	}
+	return img
 }
 
-func (g *Generator) GetPixelMatrix() [][]color.NRGBA {
-	return g.Picture.PixelMatrix
+func (fg *FractalGenerator) belongsToMandelbrotSet(iterations uint8) bool {
+	if iterations < fg.maxIterations() {
+		return false
+	} else {
+		return true
+	}
 }
 
-func (g *Generator) GetWorkerCount() int {
-	return g.Algorithm.Workers
+func (fg *FractalGenerator) pixelToComplex(x, y int) complex128 {
+	return fg.picture.pixelToComplex(x, y, fg.bounds)
 }
 
-func (g *Generator) GetWidth() int {
-	return g.Picture.Width
+func (fg *FractalGenerator) computeIterations(num complex128) uint8 {
+	return fg.algorithm.getIterations(num)
+}
+
+func (fg *FractalGenerator) maxIterations() uint8 {
+	return fg.algorithm.MaxIterations
+}
+
+func (fg *FractalGenerator) getPixelMatrix() [][]color.NRGBA {
+	return fg.picture.PixelMatrix
+}
+
+func (fg *FractalGenerator) getWorkerCount() int {
+	return fg.algorithm.Workers
+}
+
+func (fg *FractalGenerator) getWidth() int {
+	return fg.picture.Width
+}
+
+func (fg *FractalGenerator) getHeight() int {
+	return fg.picture.Height
 }

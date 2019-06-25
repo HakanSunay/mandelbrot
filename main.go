@@ -52,7 +52,7 @@ func main() {
 	bound := mandelbrot.Bound{RealMin: realMin, RealMax: realMax, ImagMin: imagMin, ImagMax: imagMax}
 	picture := mandelbrot.Picture{Width: width, Height: height, PixelMatrix: pixelMatrix}
 	algorithm := mandelbrot.Algorithm{Complexity: complexity, MaxIterations: iterations, Workers: workers}
-	generator := mandelbrot.Generator{Picture: picture, Bounds: bound, Algorithm: algorithm}
+	generator := mandelbrot.NewFractalGenerator(picture, bound, algorithm)
 
 	c := make(chan int, width)
 	var w sync.WaitGroup
