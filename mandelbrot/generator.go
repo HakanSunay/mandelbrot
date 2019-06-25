@@ -78,21 +78,21 @@ func (fg *FractalGenerator) computeIterations(num complex128) uint8 {
 }
 
 func (fg *FractalGenerator) maxIterations() uint8 {
-	return fg.algorithm.MaxIterations
+	return fg.algorithm.maxIterations
 }
 
 func (fg *FractalGenerator) getPixelMatrix() [][]color.NRGBA {
-	return fg.picture.PixelMatrix
+	return fg.picture.pixelMatrix
 }
 
 func (fg *FractalGenerator) getWorkerCount() int {
-	return fg.algorithm.Workers
+	return fg.algorithm.workers
 }
 
 func (fg *FractalGenerator) getWidth() int {
-	return fg.picture.Width
+	return fg.picture.width
 }
 
 func (fg *FractalGenerator) getHeight() int {
-	return fg.picture.Height
+	return fg.picture.height
 }

@@ -49,9 +49,9 @@ func main() {
 	)
 
 	pixelMatrix := mandelbrot.CreatePixelMatrix(height, width)
-	bound := mandelbrot.Bound{RealMin: realMin, RealMax: realMax, ImagMin: imagMin, ImagMax: imagMax}
-	picture := mandelbrot.Picture{Width: width, Height: height, PixelMatrix: pixelMatrix}
-	algorithm := mandelbrot.Algorithm{Complexity: complexity, MaxIterations: iterations, Workers: workers}
+	bound := mandelbrot.NewBound(realMin, realMax, imagMin, imagMax)
+	picture := mandelbrot.NewPicture(width, height, pixelMatrix)
+	algorithm := mandelbrot.NewAlgorithm(complexity, iterations, workers)
 	generator := mandelbrot.NewFractalGenerator(picture, bound, algorithm)
 
 	c := make(chan int, width)
