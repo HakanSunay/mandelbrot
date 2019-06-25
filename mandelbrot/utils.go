@@ -25,37 +25,27 @@ func CreatePixelMatrix(h int, w int) [][]color.NRGBA {
 
 func GetRanges(s string) (float64, float64, float64, float64) {
 	ranges := strings.Split(s, ":")
-	rmin, err := strconv.ParseFloat(ranges[0], 64)
-	if err != nil {
-		rmin = DefaultRealMin
-	}
-	rmax, err := strconv.ParseFloat(ranges[1], 64)
-	if err != nil {
-		rmax = DefaultRealMax
-	}
-	imin, err := strconv.ParseFloat(ranges[2], 64)
-	if err != nil {
-		imin = DefaultImagMin
-	}
-	imax, err := strconv.ParseFloat(ranges[3], 64)
-	if err != nil {
-		imax = DefaultImagMax
-	}
+	rmin := parseFloat(ranges[0], DefaultRealMin)
+	rmax := parseFloat(ranges[1], DefaultRealMax)
+	imin := parseFloat(ranges[2], DefaultImagMin)
+	imax := parseFloat(ranges[3], DefaultImagMax)
 	return rmin, rmax, imin, imax
 
 }
 
 func GetDimensions(s string) (int, int) {
 	dimensions := strings.Split(s, "x")
-	width, err := strconv.Atoi(dimensions[0])
-	if err != nil {
-		width = DefaultHEIGHT
-	}
-	height, err := strconv.Atoi(dimensions[1])
-	if err != nil {
-		height = DefaultWIDTH
-	}
+	width := int(parseFloat(dimensions[0], DefaultWIDTH))
+	height := int(parseFloat(dimensions[1], DefaultHEIGHT))
 	return width, height
+}
+
+func parseFloat(value string, defaultValue float64) float64 {
+	result, err := strconv.ParseFloat(value, 64)
+	if err != nil {
+		result = defaultValue
+	}
+	return result
 }
 
 func FillChannelWithColumns(c *chan int, width int) {
