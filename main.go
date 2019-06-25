@@ -13,7 +13,7 @@ import (
 const (
 	THREADS    = 1
 	DIMENSIONS = "640x480"
-	RANGE      = "-2.0:2.0:-1.0:1.0"
+	RANGE      = "-2.0:2.0:-2.0:2.0"
 	OUTPUTFILE = "zad18.png"
 	COMPLEXITY = 8
 	ITERATIONS = 50
