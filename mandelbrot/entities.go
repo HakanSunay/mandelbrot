@@ -30,9 +30,9 @@ func (b *Bound) imagDif() float64 {
 	return b.ImagMax - b.ImagMin
 }
 
-func (b *Bound) pixelToComplex(x, y int, picture Picture) complex128 {
-	width := float64(picture.Width)
-	height := float64(picture.Height)
+func (p *Picture) pixelToComplex(x, y int, b Bound) complex128 {
+	width := float64(p.Width)
+	height := float64(p.Height)
 
 	return complex(b.RealMin+(float64(x)/width)*b.realDif(),
 		b.ImagMin+(float64(y)/height)*b.imagDif())

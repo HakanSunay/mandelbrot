@@ -31,7 +31,7 @@ func (g *Generator) ExportImage() *image.NRGBA {
 }
 
 func (g *Generator) PixelToComplex(x, y int) complex128 {
-	return g.Bounds.pixelToComplex(x, y, g.Picture)
+	return g.Picture.pixelToComplex(x, y, g.Bounds)
 }
 
 func (g *Generator) ComputeIterations(num complex128) uint8 {
