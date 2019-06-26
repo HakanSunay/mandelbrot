@@ -27,14 +27,14 @@ func TestGetRangesWithCorrectRangeExpectCorrectConversion(t *testing.T) {
 }
 
 func TestCreatePixelMatrixForZeroHeightAndWidthExpectEmptyMatrix(t *testing.T) {
-	if result := CreatePixelMatrix(0,0); len(result) != 0 {
+	if result := CreatePixelMatrix(0, 0); len(result) != 0 {
 		t.Errorf("expected [] with length 0, but got length %d", len(result))
 	}
 }
 
 func TestGetDimensionsWithIncorrectInputExpectDefaultValues(t *testing.T) {
 	incorrectDimensionString := "imnotanumber"
-	if w, h := GetDimensions(incorrectDimensionString); w != DefaultWIDTH || h!=DefaultHEIGHT{
+	if w, h := GetDimensions(incorrectDimensionString); w != DefaultWIDTH || h != DefaultHEIGHT {
 		t.Errorf("expected %dx%d, got %dx%d", DefaultWIDTH, DefaultHEIGHT, w, h)
 	}
 }
@@ -42,16 +42,16 @@ func TestGetDimensionsWithIncorrectInputExpectDefaultValues(t *testing.T) {
 func TestGetDimensionsWithSemiCorrectInputExpectFirstInputAsResultAndDefault(t *testing.T) {
 	semiCorrectDimensionString := "650x4890as"
 	expectedWidth := 650
-	if w, h := GetDimensions(semiCorrectDimensionString); w != expectedWidth || h!=DefaultHEIGHT{
+	if w, h := GetDimensions(semiCorrectDimensionString); w != expectedWidth || h != DefaultHEIGHT {
 		t.Errorf("expected %dx%d, got %dx%d", expectedWidth, DefaultHEIGHT, w, h)
 	}
 }
 
-func TestGetDimensionsWithCorrectInput(t *testing.T){
+func TestGetDimensionsWithCorrectInput(t *testing.T) {
 	correctDimensionString := "650x2400"
 	expectedWidth := 650
 	expectedHeight := 2400
-	if w, h := GetDimensions(correctDimensionString); w != expectedWidth || h!= expectedHeight{
+	if w, h := GetDimensions(correctDimensionString); w != expectedWidth || h != expectedHeight {
 		t.Errorf("expected %dx%d, got %dx%d", expectedWidth, expectedHeight, w, h)
 	}
 }
