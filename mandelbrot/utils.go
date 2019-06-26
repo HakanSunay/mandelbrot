@@ -23,7 +23,7 @@ func CreatePixelMatrix(h int, w int) [][]color.NRGBA {
 	return pixels
 }
 
-func FillChannelWithColumns(c *chan int, width int) {
+func FillChannelWithRows(c *chan int, width int) {
 	for i := 0; i < width; i++ {
 		*c <- i
 	}

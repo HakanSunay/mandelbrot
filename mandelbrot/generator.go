@@ -26,11 +26,11 @@ func NewFractalGenerator(picture Picture, bound Bound, algorithm Algorithm) *Fra
 func (fg *FractalGenerator) StartComputation(w *sync.WaitGroup, channel *chan int) {
 	for n := 0; n < fg.getWorkerCount(); n++ {
 		w.Add(1)
-		go fg.computeColumn(w, channel)
+		go fg.computeAvailableRow(w, channel)
 	}
 }
 
-func (fg *FractalGenerator) computeColumn(w *sync.WaitGroup, channel *chan int) {
+func (fg *FractalGenerator) computeAvailableRow(w *sync.WaitGroup, channel *chan int) {
 	pixelMatrix := fg.getPixelMatrix()
 	for x := range *channel {
 		for y := 0; y < fg.getHeight(); y++ {

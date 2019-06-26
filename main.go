@@ -59,7 +59,7 @@ func main() {
 
 	start := time.Now()
 	generator.StartComputation(&w, &c)
-	mandelbrot.FillChannelWithColumns(&c, width)
+	mandelbrot.FillChannelWithRows(&c, width)
 
 	close(c)
 	w.Wait()
