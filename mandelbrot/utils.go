@@ -9,10 +9,10 @@ import (
 const (
 	DefaultWIDTH   = 640
 	DefaultHEIGHT  = 480
-	DefaultImagMin = -2
-	DefaultImagMax = 2
-	DefaultRealMin = -2
-	DefaultRealMax = 2
+	DefaultImagMin = -2.
+	DefaultImagMax = 2.
+	DefaultRealMin = -2.
+	DefaultRealMax = 2.
 )
 
 func CreatePixelMatrix(h int, w int) [][]color.NRGBA {
@@ -36,7 +36,6 @@ func GetRanges(s string) (float64, float64, float64, float64) {
 	imin := parseFloat(ranges, 2, DefaultImagMin)
 	imax := parseFloat(ranges, 3, DefaultImagMax)
 	return rmin, rmax, imin, imax
-
 }
 
 func GetDimensions(s string) (int, int) {
