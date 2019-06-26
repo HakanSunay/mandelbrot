@@ -39,7 +39,6 @@ func (fg *FractalGenerator) computeAvailableRow(w *sync.WaitGroup, channel *chan
 			if fg.belongsToMandelbrotSet(iterations) {
 				pixelMatrix[x][y] = color.NRGBA{A: AlphaAmplifier}
 			} else {
-				iterations := fg.algorithm.getIterations(complexNumber)
 				pixelMatrix[x][y] = color.NRGBA{R: iterations * RedColorAmplifier,
 					G: iterations * GreenColorAmplifier,
 					B: iterations * BlueColorAmplifier,
