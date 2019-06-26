@@ -55,3 +55,19 @@ func TestGetDimensionsWithCorrectInput(t *testing.T) {
 		t.Errorf("expected %dx%d, got %dx%d", expectedWidth, expectedHeight, w, h)
 	}
 }
+
+func TestIndexDoesntExistExpectTrue(t *testing.T) {
+	stringLength := 5
+	indexNum := 5
+	if !(indexDoesntExist(stringLength, indexNum)) {
+		t.Errorf("expected true, got false")
+	}
+}
+
+func TestIndexDoesntExistExpectFalse(t *testing.T) {
+	stringLength := 5
+	indexNum := 3
+	if indexDoesntExist(stringLength, indexNum) {
+		t.Errorf("expected false, got true")
+	}
+}
