@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"image/png"
 	"os"
-	"rsa/mandelbrot"
+	"mandelbrot/mandelbrot"
 	"sync"
 	"time"
 )
