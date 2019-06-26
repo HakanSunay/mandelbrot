@@ -1,5 +1,7 @@
-# Mandelbrot Project - RSA
+# Mandelbrot Project - RSA 
 # Usage
+``$ ./executable``
+## Parameters
   `-c float`
     	Fractal complexity (default 8)
     	
