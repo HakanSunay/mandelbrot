@@ -1,4 +1,4 @@
-# Mandelbrot Project - RSA 
+# Mandelbrot Set Visualizer - Distributed Systems 
 # Install
 * You can download the executable for linux
 and run it using
