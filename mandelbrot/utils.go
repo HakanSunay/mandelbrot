@@ -9,10 +9,19 @@ import (
 const (
 	DefaultWIDTH   = 640
 	DefaultHEIGHT  = 480
+	IndexOfWidth = 0
+	IndexOfHeight = 1
+	DimentionsDelimiter = "x"
 	DefaultImagMin = -2.
 	DefaultImagMax = 2.
 	DefaultRealMin = -2.
 	DefaultRealMax = 2.
+	IndexOfRealMin = 0
+	IndexOfRealMax = 1
+	IndexOfImagMin = 2
+	IndexOfImagMax = 3
+	RangesDelimiter = ":"
+	FloatBitSize = 64
 )
 
 // CreatePixelMatrix initializes a 2d array of type color.NRGBA
@@ -35,19 +44,19 @@ func FillChannelWithRows(c *chan int, width int) {
 
 // GetRanges extracts the bounds from the input of the user
 func GetRanges(s string) (float64, float64, float64, float64) {
-	ranges := strings.Split(s, ":")
-	rmin := parseFloat(ranges, 0, DefaultRealMin)
-	rmax := parseFloat(ranges, 1, DefaultRealMax)
-	imin := parseFloat(ranges, 2, DefaultImagMin)
-	imax := parseFloat(ranges, 3, DefaultImagMax)
+	ranges := strings.Split(s, RangesDelimiter)
+	rmin := parseFloat(ranges, IndexOfRealMin, DefaultRealMin)
+	rmax := parseFloat(ranges, IndexOfRealMax, DefaultRealMax)
+	imin := parseFloat(ranges, IndexOfImagMin, DefaultImagMin)
+	imax := parseFloat(ranges, IndexOfImagMax, DefaultImagMax)
 	return rmin, rmax, imin, imax
 }
 
 // GetDimensions extracts the width and the height from the input of the user
 func GetDimensions(s string) (int, int) {
-	dimensions := strings.Split(s, "x")
-	width := int(parseFloat(dimensions, 0, DefaultWIDTH))
-	height := int(parseFloat(dimensions, 1, DefaultHEIGHT))
+	dimensions := strings.Split(s, DimentionsDelimiter)
+	width := int(parseFloat(dimensions, IndexOfWidth, DefaultWIDTH))
+	height := int(parseFloat(dimensions, IndexOfHeight, DefaultHEIGHT))
 	return width, height
 }
 
@@ -57,7 +66,7 @@ func parseFloat(values []string, soughtIndexOfValue int, defaultValue float64) f
 	if indexDoesntExist(len(values), soughtIndexOfValue) {
 		return defaultValue
 	}
-	result, err := strconv.ParseFloat(values[soughtIndexOfValue], 64)
+	result, err := strconv.ParseFloat(values[soughtIndexOfValue], FloatBitSize)
 	if err != nil {
 		result = defaultValue
 	}
@@ -66,7 +75,7 @@ func parseFloat(values []string, soughtIndexOfValue int, defaultValue float64) f
 
 // indexDoesntExist checks if the sought index is out of bounds
 func indexDoesntExist(length int, index int) bool {
-	if length < index+1 {
+	if length < index + 1 {
 		return true
 	}
 	return false
