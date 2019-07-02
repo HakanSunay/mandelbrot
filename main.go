@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"image/png"
 	"os"
-	"mandelbrot/mandelbrot"
+	"github.com/HakanSunay/mandelbrot/mandelbrot"
 	"sync"
 	"time"
 )
