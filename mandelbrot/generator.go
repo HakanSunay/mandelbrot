@@ -1,3 +1,5 @@
+// Package mandelbrot provides mathematical abstractions
+// and a user-defined generator to create a fractal
 package mandelbrot
 
 import (
